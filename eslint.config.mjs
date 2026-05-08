@@ -71,16 +71,6 @@ export default tseslint.config(
               message:
                 'Infrastructure imports should be internal to the module. Use public APIs through barrel exports.',
             },
-            {
-              group: ['../../../modules/*'],
-              message:
-                'Use path aliases (@modules/*, @category/*, etc.) for cross-module imports instead of relative paths',
-            },
-            {
-              group: ['../../modules/*'],
-              message:
-                'Use path aliases (@modules/*, @category/*, etc.) for cross-module imports instead of relative paths',
-            },
           ],
         },
       ],
@@ -154,6 +144,25 @@ export default tseslint.config(
 
       // Prevent duplicate imports
       'import/no-duplicates': 'error',
+    },
+  },
+  // Module composition roots are allowed to wire infrastructure internally.
+  // Other files must not import from infrastructure paths directly.
+  {
+    files: ['src/modules/**/**.module.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['src/*'],
+              message:
+                'Use path aliases (@common, @shared, @modules, etc.) instead of "src/" imports',
+            },
+          ],
+        },
+      ],
     },
   },
   // Special rules for tests
